@@ -1,0 +1,22 @@
+.button {
+  position: absolute;
+  height: 40px;
+  width: 40px;
+  margin: auto;
+  top: 15px;
+  right: 35px;
+  cursor: pointer;
+  background: transparent;
+  outline: none;
+  border: 0;
+}
+
+.button img {
+  position: absolute;
+  height: 40px;
+  margin: auto;
+  top: 25px;
+  right: 0;
+  left: 0;
+  bottom: 0;
+}
