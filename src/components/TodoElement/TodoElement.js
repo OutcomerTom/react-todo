@@ -4,19 +4,23 @@ import checkIcon from "img/check-square-regular.svg";
 import Button from "components/Button/Button.jsx";
 import "./style.css";
 
-function Todo(props) {
-  const { todo, handleCloseClick, handleStrikeClick } = props;
+function TodoElement(props) {
+  const { todo, onCloseClick, onStrike } = props;
   return (
     <div className="todoElementContainer">
-      <span>{todo}</span>
-      <Button className="close" onClick={() => handleCloseClick(todo)}>
+      {todo.strike ? (
+        <strike>{todo.description}</strike>
+      ) : (
+        <span>{todo.description}</span>
+      )}
+      <Button className="close" onClick={() => onCloseClick(todo)}>
         <img src={minusIcon} />
       </Button>
-      <Button className="strike" onClick={() => handleStrikeClick(todo)}>
+      <Button className="strike" onClick={() => onStrike(todo)}>
         <img src={checkIcon} />
       </Button>
     </div>
   );
 }
 
-export default Todo;
+export default TodoElement;

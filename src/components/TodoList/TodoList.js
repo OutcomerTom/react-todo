@@ -1,96 +1,90 @@
 import React, { useState } from "react";
-import Todo from "../TodoElement/Todo";
+import TodoElement from "components/TodoElement/TodoElement";
 import plusIcon from "img/plus-square-regular.svg";
-import Button from "components/Button/Button.jsx";
-import Input from "components/Input/Input.jsx";
+import Button from "components/Button/Button";
+import Input from "components/Input/Input";
+import { localStorageKeys } from "./helpers";
+import TodoHeader from "components/TodoHeader/TodoHeader";
 import "./style.css";
 
 function TodoList(props) {
-  // const [todoList, setTodoList] =useState([]);
-  // const [inputValue, setInputValue] = useState("");
-  const [todoListState, setTodoListState] = useState({
-    todos: [],
-    inputValue: "",
-    error: "",
-  });
+  const { TODO_LIST } = localStorageKeys;
+  const todoListFromLocalStorage = localStorage.getItem(TODO_LIST);
+  const initialToDoList = todoListFromLocalStorage
+    ? JSON.parse(todoListFromLocalStorage)
+    : [];
+  const [todoList, setTodoList] = useState(initialToDoList);
+  const [inputValue, setInputValue] = useState("");
+  const [error, setError] = useState("");
 
   const handleInputChange = (event) => {
-    const { value, name } = event.target;
-    // setInputValue(value);
-    setTodoListState({
-      ...todoListState,
-      inputValue: value,
-    });
+    const { value } = event.target;
+    setInputValue(value);
   };
 
-  const handleButtonClick = () => {
-    const { todos } = todoListState;
+  const addItem = () => {
+    if (inputValue.trim() === "") return;
 
-    if (!inputValue) return;
-
-    if (todos.some((todo) => todo === inputValue)) {
-      setTodoListState({
-        ...todoListState,
-        error: "To zadanie już istnieje",
-        inputValue: "",
-      });
+    if (todoList.some((todo) => todo.description === inputValue)) {
+      setError("To zadanie już istnieje");
       return;
     }
-
-    setTodoListState({
-      error: "",
-      todos: [...todos, inputValue],
-      inputValue: "",
-    });
+    const newState = [...todoList, { description: inputValue, strike: false }];
+    setTodoList(newState);
+    setInputValue("");
+    setError("");
+    localStorage.setItem(TODO_LIST, JSON.stringify(newState));
   };
 
-  const handleTodoRemove = (todoValue) => {
-    setTodoListState({
-      ...todoListState,
-      todos: todos.filter((todo) => todo !== todoValue),
-    });
+  const removeTodo = (indexToRemove) => {
+    const newArray = todoList.filter((todo, index) => indexToRemove !== index);
+    setTodoList(newArray);
+    localStorage.setItem(TODO_LIST, JSON.stringify(newArray));
   };
 
-  // function handleToggleComplete(id) {
-  //     const updatedlist = [...todos].map((todo) => {
-  //       if((todo.id === id)) {
-  //         todo.completed = !todo.completed
-  //       }
-  //       return todo;
-  //     })
-  //     setList(updatedlist)
-  // }
+  const strikeTodo = (indexToStrike) => {
+    const newArray = todoList.map((todo, index) =>
+      indexToStrike === index ? { ...todo, strike: !todo.strike } : todo
+    );
+    setTodoList(newArray);
+    localStorage.setItem(TODO_LIST, JSON.stringify(newArray));
+  };
 
-  const { error, todos, inputValue } = todoListState;
+  const taskLenght = todoList.length;
+  const doneTaskLenght = todoList.filter((todo) => todo.strike).length;
 
   return (
-    <div className="todoList">
-      <h1>Moja aplikacja Todo</h1>
-      <div className="todoListContainer">
-        <div className="inputContainer">
-          <Input
-            className="input"
-            name="Todo Input"
-            placeholder="Co będziemy dzisiaj robić?"
-            value={inputValue}
-            onChange={handleInputChange}
-          />
-        </div>
-        <Button className="button" onClick={handleButtonClick}>
-          <img src={plusIcon} />
-        </Button>
-        {!!error && <p>{error}</p>}
+    <>
+      <TodoHeader taskLenght={taskLenght} doneTaskLenght={doneTaskLenght}>
+        Moja aplikacja Todo
+      </TodoHeader>
+      <div className="todoList">
+        <div className="todoListContainer">
+          <div className="inputContainer">
+            <Input
+              className="input"
+              name="Todo Input"
+              placeholder="Co będziemy dzisiaj robić?"
+              value={inputValue}
+              onChange={handleInputChange}
+            />
+          </div>
+          <Button className="button" onClick={addItem}>
+            <img src={plusIcon} />
+          </Button>
+          {!!error && <p>{error}</p>}
 
-        {todos.map((todo) => (
-          <Todo
-            key={todo}
-            todo={todo}
-            handleCloseClick={handleTodoRemove}
-            // handleStrikeClick={handleToggleComplet}
-          />
-        ))}
+          {todoList.map((todo, index) => (
+            <TodoElement
+              key={todo.description}
+              todo={todo}
+              onCloseClick={() => removeTodo(index)}
+              onStrike={() => strikeTodo(index)}
+            />
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
