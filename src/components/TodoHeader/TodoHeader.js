@@ -15,6 +15,11 @@ const TodoHeader = ({ taskLenght, doneTaskLenght, children }) => {
           Number of done tasks: <span>{doneTaskLenght}</span>
         </span>
       )}
+      {doneTaskLenght !== undefined && (
+        <span className="doneTaskNumberLabel">
+          Number of done tasks: <span>{doneTaskLenght}</span>
+        </span>
+      )}
     </div>
   );
 };
