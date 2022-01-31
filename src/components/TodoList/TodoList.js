@@ -56,7 +56,7 @@ function TodoList(props) {
   return (
     <>
       <TodoHeader taskLenght={taskLenght} doneTaskLenght={doneTaskLenght}>
-        Moja aplikacja Todo
+        My ToDo App
       </TodoHeader>
       <div className="todoList">
         <div className="todoListContainer">
@@ -64,7 +64,7 @@ function TodoList(props) {
             <Input
               className="input"
               name="Todo Input"
-              placeholder="Co będziemy dzisiaj robić?"
+              placeholder="What are we going to do today?"
               value={inputValue}
               onChange={handleInputChange}
             />
